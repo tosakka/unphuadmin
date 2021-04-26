@@ -1,10 +1,15 @@
+#Sistema de administracion de base de datos universitaria
+#Cesar Arturo Reyes, 20-0669
+
+#Primero se importe el conector de mysql para asi poder tener acceso a la base ded atos alojada con mysq;, y la libreria de sys para apoyar los menus.
 import mysql.connector as mysql
 import sys
-from mysql.connector import Error
 
+#Comando principal para conectarse a la base de datos.
 base = mysql.connect(host="localhost",user="root",password="",database="unfu")
 command_handler = base.cursor(buffered=True)
 
+#Menu que se ve luego de iniciar sesion
 def sesion():
     while 1:
         print("\n Menu")
@@ -26,6 +31,7 @@ def sesion():
             print("6. Regresar al menu principal.")
                     
             me_opcion = input(str("Digite su opcion: "))
+            #Estos comandos se repiten en el resto de opciones de manejamiento, empezando por este, que funciona para añadir una nueva linea a la tabla
             if me_opcion == "1":
                 print("\n Registre al nuevo estudiante")
                 nombre_usuario = input(str("Nombre de usuario del estudiante: "))
@@ -34,6 +40,7 @@ def sesion():
                 command_handler.execute("INSERT INTO estudiant (nombre,contrasena,privilegio) VALUES (%s,%s,'estudiante')",query_vals)
                 base.commit()
                 print(nombre_usuario + " ha sido registrado como estudiante")
+            #esta funciona para eliminar una linea basado en el nombre que des
             elif me_opcion == "2":
                 print("\n Eliminar estudiante")
                 nombre_usuario = input(str("Digite el usuario que desea eliminar: "))
@@ -44,12 +51,15 @@ def sesion():
                     print("Ese usuario no existe")
                 else:
                     print(nombre_usuario + " Ha sido removido del sistema.")
+                    
+            #Este muestra una lista de todas las lineas en la tabla de estudiante, se cambia la tabla en cada otra opcion.
             elif me_opcion == "3":
                 command_handler.execute("SELECT * FROM estudiant")
                 
                 result = command_handler.fetchall()
                 for row in result:
                     print(row, '\n')
+            #Esto deberia de mostrar la informacion de una linea basada en el nombre que se introduzca.
             elif me_opcion == "4":
                 nombre_usuario = input(str("Nombre de usuario del estudiante: "))
                 query_vals = (nombre_usuario)
@@ -57,7 +67,7 @@ def sesion():
                 base.commit()
                 resultado = command_handler.fetchone()
                 print(resultado)
-
+            #Este te deberia de permitir actualizar informacion basada en el nombre que se introduzca
             elif me_opcion == "5":
                 nombre_usuario = input(str("Nombre del estudiante: "))
                 update = input(str("Introduzca correccion: "))
@@ -65,7 +75,7 @@ def sesion():
                 command_handler.execute(sql, [nombre_usuario, update])
                 base.commit()
                 print("El usuario ha sido actualizado.")
-
+            #Te devuelve al menu principal.
             elif me_opcion == "6":
                 break
             else:
@@ -306,7 +316,7 @@ def sesion():
             print("Hasta luego")
             break
 
-
+#Esta es una funcion de inicio de sesion con un contador de intentos el cual puede detectar si has utilizado la informacion incorrecta, te da tres intentos y luego te saca del sistema. El profesor dijo que solo debe de ser un usuario genericoa si que solo hay un usuario y una clave.
 def auth():
     intentos = 0
     suceso = False
@@ -327,10 +337,10 @@ def auth():
         else:
             print("Credenciales incorrectas.")
 
-
+#La primera pantalla que muestra el codigo, esta luego te envia a la pantalla de inicio de sesion.
 def main():
     while 1:
-        print("placeholder")
+        print("Buenos dias, bienvenido al sistema administrativo")
         print("\n Presione 1 para iniciar sesion")
 
         user_option = input(str("Presione la tecla necesaria: "))
